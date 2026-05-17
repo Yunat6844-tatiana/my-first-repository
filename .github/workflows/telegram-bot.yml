@@ -1,6 +1,14 @@
 name: Telegram bot
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/telegram-bot.yml"
+      - "bot.py"
+      - "requirements.txt"
+      - "data/**"
   schedule:
     - cron: "*/5 6-23 * * *"
   workflow_dispatch:
