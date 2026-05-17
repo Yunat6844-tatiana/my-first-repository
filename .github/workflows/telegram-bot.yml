@@ -10,7 +10,7 @@ on:
       - "requirements.txt"
       - "data/**"
   schedule:
-    - cron: "*/5 6-23 * * *"
+    - cron: "*/10 9-21 * * *"
   workflow_dispatch:
 
 permissions:
@@ -30,7 +30,7 @@ jobs:
         id: bot-hours
         run: |
           hour="$(TZ=Europe/Lisbon date +%H)"
-          if [ "$hour" -ge 7 ] && [ "$hour" -lt 23 ]; then
+          if [ "$hour" -ge 10 ] && [ "$hour" -lt 21 ]; then
             echo "enabled=true" >> "$GITHUB_OUTPUT"
           else
             echo "enabled=false" >> "$GITHUB_OUTPUT"
@@ -91,14 +91,7 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           BOT_TIMEZONE: Europe/Lisbon
           DAILY_SEND_TIME: "08:00"
-        run: |
-          for attempt in $(seq 1 12); do
-            echo "Polling Telegram updates, attempt ${attempt}/12"
-            python bot.py --once
-            if [ "$attempt" -lt 12 ]; then
-              sleep 20
-            fi
-          done
+        run: python bot.py --once
 
       - name: Save bot state
         if: steps.bot-hours.outputs.enabled == 'true'
