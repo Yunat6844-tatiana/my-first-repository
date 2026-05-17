@@ -91,7 +91,14 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           BOT_TIMEZONE: Europe/Lisbon
           DAILY_SEND_TIME: "08:00"
-        run: python bot.py --once
+        run: |
+          for attempt in $(seq 1 12); do
+            echo "Polling Telegram updates, attempt ${attempt}/12"
+            python bot.py --once
+            if [ "$attempt" -lt 12 ]; then
+              sleep 20
+            fi
+          done
 
       - name: Save bot state
         if: steps.bot-hours.outputs.enabled == 'true'
